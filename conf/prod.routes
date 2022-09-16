@@ -1,5 +1,5 @@
 # Add all the application routes to the app.routes file
-->         /email                     app.Routes
+->         /email-example-frontend    app.Routes
 ->         /                          health.Routes
 
 GET        /admin/metrics             com.kenshoo.play.metrics.MetricsController.metrics
