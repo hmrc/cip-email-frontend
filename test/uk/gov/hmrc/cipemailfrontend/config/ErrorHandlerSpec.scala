@@ -19,25 +19,16 @@ package uk.gov.hmrc.cipemailfrontend.config
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.Application
-import play.api.test.FakeRequest
-import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.test.{FakeRequest, Injecting}
 
 class ErrorHandlerSpec extends AnyWordSpec
   with Matchers
-  with GuiceOneAppPerSuite {
-
-  override def fakeApplication(): Application =
-    new GuiceApplicationBuilder()
-      .configure(
-        "metrics.jvm"     -> false,
-        "metrics.enabled" -> false
-      )
-      .build()
+  with GuiceOneAppPerSuite
+  with Injecting {
 
   private val fakeRequest = FakeRequest("GET", "/")
 
-  private val handler = app.injector.instanceOf[ErrorHandler]
+  private val handler = inject[ErrorHandler]
 
   "standardErrorTemplate" should {
     "render HTML" in {
@@ -45,5 +36,4 @@ class ErrorHandlerSpec extends AnyWordSpec
       html.contentType shouldBe "text/html"
     }
   }
-
 }

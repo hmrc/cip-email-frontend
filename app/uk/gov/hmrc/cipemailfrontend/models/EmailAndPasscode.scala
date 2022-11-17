@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,17 +12,23 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this(layout: Layout)
+package uk.gov.hmrc.cipemailfrontend.models
 
-@()(implicit request: Request[_], messages: Messages)
+import play.api.data.Form
+import play.api.data.Forms.{mapping, text}
+import play.api.libs.json.{Json, OFormat}
 
-@layout(pageTitle = Some("cip-email-frontend")) {
-    <h1 class="govuk-heading-xl">cip-email-frontend</h1>
-    <p class="govuk-body">@{messages("service.text")}</p>
-}
+case class EmailAndPasscode(email: String, passcode: String)
 
-@{
-    //$COVERAGE-OFF$
+object EmailAndPasscode {
+  lazy val form: Form[EmailAndPasscode] = Form(
+    mapping(
+      "email" -> text,
+      "passcode" -> text
+    )(EmailAndPasscode.apply)(EmailAndPasscode.unapply)
+  )
+
+  implicit val formats: OFormat[EmailAndPasscode] = Json.format[EmailAndPasscode]
 }

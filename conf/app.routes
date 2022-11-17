@@ -1,5 +1,11 @@
 # microservice specific routes
 
-->         /hmrc-frontend           hmrcfrontend.Routes
-GET        /                        uk.gov.hmrc.cipemailfrontend.controllers.HelloWorldController.helloWorld
-GET        /assets/*file            controllers.Assets.versioned(path = "/public", file: Asset)
+->          /hmrc-frontend        hmrcfrontend.Routes
+GET         /                     uk.gov.hmrc.cipemailfrontend.controllers.LandingPageController.landing(verified: Option[Boolean] ?= None)
+GET         /verify               uk.gov.hmrc.cipemailfrontend.controllers.VerifyController.verifyForm(email: Option[String] ?= None)
+POST        /verify               uk.gov.hmrc.cipemailfrontend.controllers.VerifyController.verify
+GET         /verify/passcode      uk.gov.hmrc.cipemailfrontend.controllers.VerifyPasscodeController.verifyForm(email: Option[String] ?= None)
+POST        /verify/passcode      uk.gov.hmrc.cipemailfrontend.controllers.VerifyPasscodeController.verify
+GET         /verify/resend        uk.gov.hmrc.cipemailfrontend.controllers.VerifyPasscodeController.resendForm(email: Option[String] ?= None)
+POST        /verify/resend        uk.gov.hmrc.cipemailfrontend.controllers.VerifyPasscodeController.resend
+GET         /assets/*file         controllers.Assets.versioned(path = "/public", file: Asset)
