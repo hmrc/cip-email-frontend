@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.cipemailfrontend.config
+package uk.gov.hmrc.cipemailfrontend.models
 
-import play.api.Configuration
+import play.api.libs.json.{Json, OWrites}
 
-import javax.inject.{Inject, Singleton}
+case class ErrorResponse(code: String, message: String)
 
-@Singleton
-class AppConfig @Inject()(config: Configuration) {
-  val welshLanguageSupportEnabled: Boolean = config.getOptional[Boolean]("features.welsh-language-support").getOrElse(false)
-
-  lazy val gatewayUrlProtocol: String = config.get[String]("microservice.services.cipemail.protocol")
-  lazy val gatewayUrlHost: String = config.get[String]("microservice.services.cipemail.host")
-  lazy val gatewayUrlPort: String = config.get[String]("microservice.services.cipemail.port")
+object ErrorResponse {
+  implicit val writes: OWrites[ErrorResponse] = Json.writes[ErrorResponse]
 }

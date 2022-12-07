@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.cipemailfrontend
 
+import org.jsoup.Jsoup
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -24,7 +25,7 @@ import play.api.libs.ws.WSClient
 import play.api.libs.ws.ahc.AhcCurlRequestLogger
 import play.api.test.Injecting
 
-class HealthEndpointIntegrationSpec
+class LandingPageEndpointIntegrationSpec
   extends AnyWordSpec
     with Matchers
     with ScalaFutures
@@ -35,16 +36,19 @@ class HealthEndpointIntegrationSpec
   private val wsClient = inject[WSClient]
   private val baseUrl = s"http://localhost:$port"
 
-  "service health endpoint" should {
-    "respond with 200 status" in {
+  "landing page endpoint" should {
+    "should load the landing page" in {
       val response =
         wsClient
-          .url(s"$baseUrl/ping/ping")
+          .url(s"$baseUrl/email-example-frontend")
           .withRequestFilter(AhcCurlRequestLogger())
           .get()
           .futureValue
 
       response.status shouldBe 200
+
+      val document = Jsoup.parse(response.body)
+      document.title() shouldBe "Email verification service"
     }
   }
 }

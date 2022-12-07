@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.cipemailfrontend
 
+import org.jsoup.Jsoup
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -24,7 +25,7 @@ import play.api.libs.ws.WSClient
 import play.api.libs.ws.ahc.AhcCurlRequestLogger
 import play.api.test.Injecting
 
-class HealthEndpointIntegrationSpec
+class VerifyEndpointIntegrationSpec
   extends AnyWordSpec
     with Matchers
     with ScalaFutures
@@ -35,16 +36,48 @@ class HealthEndpointIntegrationSpec
   private val wsClient = inject[WSClient]
   private val baseUrl = s"http://localhost:$port"
 
-  "service health endpoint" should {
-    "respond with 200 status" in {
+  "GET /verify" should {
+    "load the verify page" in {
       val response =
         wsClient
-          .url(s"$baseUrl/ping/ping")
+          .url(s"$baseUrl/email-example-frontend/verify")
           .withRequestFilter(AhcCurlRequestLogger())
           .get()
           .futureValue
 
       response.status shouldBe 200
+
+      val document = Jsoup.parse(response.body)
+      document.title() shouldBe "Enter email"
+    }
+  }
+
+  "POST /verify" should {
+    "redirect to passcode page when email is valid" in {
+      val email = "a@a.com"
+      val response =
+        wsClient
+          .url(s"$baseUrl/email-example-frontend/verify")
+          .withRequestFilter(AhcCurlRequestLogger())
+          .withFollowRedirects(false)
+          .post(Map("email" -> email))
+          .futureValue
+
+      response.status shouldBe 303
+      response.header("Location") shouldBe Some(s"/email-example-frontend/verify/passcode?email=$email")
+    }
+
+    "return 400 when form is invalid" in {
+      val response =
+        wsClient
+          .url(s"$baseUrl/email-example-frontend/verify")
+          .withRequestFilter(AhcCurlRequestLogger())
+          .post(Map("email" -> "invalid"))
+          .futureValue
+
+      response.status shouldBe 400
+      val document = Jsoup.parse(response.body)
+      document.title() shouldBe "Enter email"
     }
   }
 }

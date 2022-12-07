@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.cipemailfrontend.config
+package uk.gov.hmrc.cipemailfrontend.models
 
-import play.api.Configuration
+import play.api.data.Form
+import play.api.data.Forms.{mapping, text}
+import play.api.libs.json.{Json, OFormat}
 
-import javax.inject.{Inject, Singleton}
+case class Email(email: String)
 
-@Singleton
-class AppConfig @Inject()(config: Configuration) {
-  val welshLanguageSupportEnabled: Boolean = config.getOptional[Boolean]("features.welsh-language-support").getOrElse(false)
+object Email {
+  lazy val form: Form[Email] = Form(
+    mapping(
+      "email" -> text
+    )(Email.apply)(Email.unapply)
+  )
 
-  lazy val gatewayUrlProtocol: String = config.get[String]("microservice.services.cipemail.protocol")
-  lazy val gatewayUrlHost: String = config.get[String]("microservice.services.cipemail.host")
-  lazy val gatewayUrlPort: String = config.get[String]("microservice.services.cipemail.port")
+  implicit val formats: OFormat[Email] = Json.format[Email]
 }

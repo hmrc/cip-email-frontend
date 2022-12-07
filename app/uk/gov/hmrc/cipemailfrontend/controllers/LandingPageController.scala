@@ -16,20 +16,20 @@
 
 package uk.gov.hmrc.cipemailfrontend.controllers
 
-import uk.gov.hmrc.cipemailfrontend.views.html.HelloWorldPage
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.cipemailfrontend.views.html.LandingPage
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class HelloWorldController @Inject()(
-  mcc: MessagesControllerComponents,
-  helloWorldPage: HelloWorldPage)
-    extends FrontendController(mcc) {
+class LandingPageController @Inject()(
+                                       mcc: MessagesControllerComponents,
+                                       landingPage: LandingPage)
+  extends FrontendController(mcc) {
 
-  val helloWorld: Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(helloWorldPage()))
+  def landing(verified: Option[Boolean] = None): Action[AnyContent] = Action.async { implicit request =>
+    Future.successful(Ok(landingPage(verified)))
   }
-
 }

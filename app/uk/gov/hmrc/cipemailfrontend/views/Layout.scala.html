@@ -15,21 +15,26 @@
  *@
 
 @import uk.gov.hmrc.cipemailfrontend.config.AppConfig
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcLayout
-@import views.html.helper.CSPNonce
+@import uk.gov.hmrc.cipemailfrontend.views.html.FullWidthContent
 
 @this(
         appConfig: AppConfig,
-        hmrcLayout: HmrcLayout
+        hmrcLayout: HmrcLayout,
+        fullWidthContent: FullWidthContent
 )
-@(pageTitle: Option[String] = None)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
+@(
+        pageTitle: Option[String] = None,
+        backLinkUrl: Option[String] = None
+)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
 
-@hmrcLayout(
-    pageTitle = pageTitle,
-    nonce = CSPNonce.get,
-    isWelshTranslationAvailable = appConfig.welshLanguageSupportEnabled
-)(contentBlock)
+    @hmrcLayout(
+        pageTitle = pageTitle,
+        isWelshTranslationAvailable = appConfig.welshLanguageSupportEnabled,
+        backLinkUrl = backLinkUrl,
+        displayHmrcBanner = true,
+        mainContentLayout = Some(fullWidthContent(_))
+    )(contentBlock)
 
-@{
-    //$COVERAGE-OFF$
-}
+    @{
+        //$COVERAGE-OFF$
+    }

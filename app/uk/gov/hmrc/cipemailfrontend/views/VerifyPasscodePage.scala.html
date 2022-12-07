@@ -1,0 +1,73 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.cipemailfrontend.views.html.Layout
+@import uk.gov.hmrc.hmrcfrontend.views.Implicits.RichErrorSummary
+
+@this(
+        layout: Layout,
+        formWithCSRF: FormWithCSRF,
+        govukInput: GovukInput,
+        govukButton: GovukButton,
+        govukErrorSummary: GovukErrorSummary
+)
+@(form: Form[uk.gov.hmrc.cipemailfrontend.models.EmailAndPasscode])(implicit request: Request[_], messages: Messages)
+
+@layout(
+    pageTitle = Some(messages("verifyPasscodePage.title")),
+    backLinkUrl = Some(uk.gov.hmrc.cipemailfrontend.controllers.routes.VerifyController.verifyForm(form("email").value).url)
+) {
+    @if(form.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+    }
+
+    <p class="govuk-body" style="word-wrap: break-word">@messages("verifyPasscodePage.passcodeSent", form("email").value.get.patch(3, "xxxxx", 5))</p>
+    <p class="govuk-body">@messages("verifyPasscodePage.passcodeSentPrompt")</p>
+
+    @formWithCSRF(uk.gov.hmrc.cipemailfrontend.controllers.routes.VerifyPasscodeController.verify) {
+        <input type="hidden" name="email" value="@form("email").value" />
+
+        @govukInput(
+            Input(
+                value = form("passcode").value,
+                errorMessage = form("passcode").error.map(
+                    err => ErrorMessage(content = Text(messages(err.message, err.args: _*)))
+                ),
+                id = "passcode",
+                name = "passcode",
+                inputType = "text",
+                label = Label(
+                    content = Text(messages("verifyPasscodePage.label")),
+                    classes = "govuk-label govuk-label--l"
+                ),
+                classes = "govuk-input--width-5",
+                spellcheck = Some(false),
+                attributes = Map("maxlength" -> "6")
+            )
+        )
+        @govukButton(Button(
+            content = Text(messages("verifyPasscodePage.button")),
+            inputType = Some("submit"),
+            preventDoubleClick = true
+        ))
+        <br />
+        <a class="govuk-link" href="@uk.gov.hmrc.cipemailfrontend.controllers.routes.VerifyPasscodeController.resendForm(form("email").value)">Resend passcode</a>
+    }
+}
+
+@{
+    //$COVERAGE-OFF$
+}
