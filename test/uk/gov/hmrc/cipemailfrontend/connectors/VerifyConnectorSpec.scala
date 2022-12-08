@@ -81,6 +81,7 @@ class VerifyConnectorSpec extends AnyWordSpec
         "microservice.services.cipemail.host" -> wireMockHost,
         "microservice.services.cipemail.port" -> wireMockPort,
         "microservice.services.cipemail.protocol" -> "http",
+        "microservice.services.cipemail.auth-token" -> "fake-token"
       ))
     )
 
