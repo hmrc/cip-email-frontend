@@ -27,4 +27,5 @@ class AppConfig @Inject()(config: Configuration) {
   lazy val gatewayUrlProtocol: String = config.get[String]("microservice.services.cipemail.protocol")
   lazy val gatewayUrlHost: String = config.get[String]("microservice.services.cipemail.host")
   lazy val gatewayUrlPort: String = config.get[String]("microservice.services.cipemail.port")
+  lazy val gatewayUrlAuthToken: String = config.get[String]("microservice.services.cipemail.auth-token")
 }
