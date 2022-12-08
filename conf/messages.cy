@@ -22,3 +22,5 @@ verifyPasscodePage.passcodeExpired = Mae'r cod pas wedi dod i ben. Cliciwch ar y
 resendPasscodePage.title = Gofyn am god pas newydd
 resendPasscodePage.button = Gofyn am god pas newydd
 resendPasscodePage.message = Os na chawsoch y neges destun neu os yw'r cod pas wedi dod i ben, gallwch ofyn am un newydd.
+resendPasscode.linkMessage = Ail-anfon cod pas
+resendPasscode.inProgress = Mae'r dilysu'n dal i fynd rhagddo

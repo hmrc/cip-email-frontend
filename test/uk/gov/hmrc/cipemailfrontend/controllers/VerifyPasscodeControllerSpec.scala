@@ -104,7 +104,7 @@ class VerifyPasscodeControllerSpec extends AnyWordSpec
       mockVerifyConnector.verifyPasscode(EmailAndPasscode(email, passcode))(any[HeaderCarrier]) was called
       mockVerifyPasscodePage.apply(EmailAndPasscode.form
         .withError("passcode", "verifyPasscodePage.incorrectPasscode")
-        .fill(EmailAndPasscode(email, "")))(*, *) was called
+        .fill(EmailAndPasscode(email, "")), true)(*, *) was called
     }
 
     "return OK when passcode has expired" in new SetUp {
@@ -135,7 +135,7 @@ class VerifyPasscodeControllerSpec extends AnyWordSpec
       status(result) shouldBe BAD_REQUEST
       contentAsString(result) shouldBe "some html content"
 
-      mockVerifyPasscodePage.apply(EmailAndPasscode.form.bind(Map("email" -> email)))(*, *) was called
+      mockVerifyPasscodePage.apply(EmailAndPasscode.form.bind(Map("email" -> email)), true)(*, *) was called
     }
 
     "return bad request when request is invalid" in new SetUp {
@@ -151,7 +151,7 @@ class VerifyPasscodeControllerSpec extends AnyWordSpec
       mockVerifyConnector.verifyPasscode(EmailAndPasscode(email, passcode))(any[HeaderCarrier]) was called
       mockVerifyPasscodePage.apply(EmailAndPasscode.form
         .withError("passcode", "verifyPasscodePage.error")
-        .fill(EmailAndPasscode(email, "")))(*, *) was called
+        .fill(EmailAndPasscode(email, "")), true)(*, *) was called
     }
   }
 
@@ -189,6 +189,7 @@ class VerifyPasscodeControllerSpec extends AnyWordSpec
   "resend" should {
     "redirect to verify passcode page" in new SetUp {
       private val email = "test"
+      private val passcode = "test"
       private val request = fakeRequest.withFormUrlEncodedBody("email" -> email)
       mockVerifyConnector.verify(Email(email))(any[HeaderCarrier])
         .returns(Future.successful(Right(HttpResponse(Status.OK, "", Map("Location" -> Seq("notificationId"))))))
@@ -211,7 +212,7 @@ class VerifyPasscodeControllerSpec extends AnyWordSpec
     protected val controller: VerifyPasscodeController = new VerifyPasscodeController(
       Helpers.stubMessagesControllerComponents(), mockVerifyPasscodePage, mockResendPasscodePage, mockVerifyConnector)
 
-    mockVerifyPasscodePage.apply(*)(*, *)
+    mockVerifyPasscodePage.apply(*, *)(*, *)
       .returns(Html("some html content"))
 
     mockResendPasscodePage.apply(*)(*, *)

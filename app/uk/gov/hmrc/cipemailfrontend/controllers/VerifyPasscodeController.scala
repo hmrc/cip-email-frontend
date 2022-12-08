@@ -36,9 +36,9 @@ class VerifyPasscodeController @Inject()(
   extends FrontendController(mcc)
     with Logging {
 
-  def verifyForm(email: Option[String]): Action[AnyContent] = Action.async { implicit request =>
+  def verifyForm(email: Option[String], requestInProgress: Boolean = false): Action[AnyContent] = Action.async { implicit request =>
     email match {
-      case Some(value) => Future.successful(Ok(verifyPasscodePage(EmailAndPasscode.form.fill(EmailAndPasscode(value, "")))))
+      case Some(value) => Future.successful(Ok(verifyPasscodePage(EmailAndPasscode.form.fill(EmailAndPasscode(value, "")), requestInProgress)))
       case None => Future.successful(SeeOther("/email-example-frontend"))
     }
   }
@@ -47,7 +47,7 @@ class VerifyPasscodeController @Inject()(
     EmailAndPasscode.form.bindFromRequest().fold(
       invalid => {
         logger.warn(s"Failed to validate request")
-        Future.successful(BadRequest(verifyPasscodePage(invalid)))
+        Future.successful(BadRequest(verifyPasscodePage(invalid, true)))
       },
       emailAndPasscode => {
         verifyConnector.verifyPasscode(emailAndPasscode) map {
@@ -55,7 +55,7 @@ class VerifyPasscodeController @Inject()(
             logger.warn(l.message)
             BadRequest(verifyPasscodePage(EmailAndPasscode.form
               .withError("passcode", "verifyPasscodePage.error")
-              .fill(EmailAndPasscode(emailAndPasscode.email, ""))))
+              .fill(EmailAndPasscode(emailAndPasscode.email, "")), true))
           case Right(r) => {
             val optStatus = r.json \ "status"
             if (optStatus.isDefined) {
@@ -63,12 +63,12 @@ class VerifyPasscodeController @Inject()(
                 case "Verified" => SeeOther("/email-example-frontend?verified=true")
                 case "Not verified" => Ok(verifyPasscodePage(EmailAndPasscode.form
                   .withError("passcode", "verifyPasscodePage.incorrectPasscode")
-                  .fill(EmailAndPasscode(emailAndPasscode.email, ""))))
+                  .fill(EmailAndPasscode(emailAndPasscode.email, "")), true))
               }
             } else {
               Ok(verifyPasscodePage(EmailAndPasscode.form
                 .withError("passcode", "verifyPasscodePage.passcodeExpired")
-                .fill(EmailAndPasscode(emailAndPasscode.email, ""))))
+                .fill(EmailAndPasscode(emailAndPasscode.email, "")), false))
             }
           }
         }
@@ -86,8 +86,11 @@ class VerifyPasscodeController @Inject()(
   def resend: Action[AnyContent] = Action.async { implicit request =>
     val email = Email.form.bindFromRequest().get
     verifyConnector.verify(Email(email.email)).map {
-      case Right(_) => Ok(verifyPasscodePage(EmailAndPasscode.form
+      case Right(_) =>
+        Ok(verifyPasscodePage(EmailAndPasscode.form
         .fill(EmailAndPasscode(email.email, ""))))
+      case Left(_) =>
+        Ok(verifyPasscodePage(EmailAndPasscode.form.fill(EmailAndPasscode(email.email, "")), true))
     }
   }
 }

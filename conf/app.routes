@@ -4,7 +4,7 @@
 GET         /                     uk.gov.hmrc.cipemailfrontend.controllers.LandingPageController.landing(verified: Option[Boolean] ?= None)
 GET         /verify               uk.gov.hmrc.cipemailfrontend.controllers.VerifyController.verifyForm(email: Option[String] ?= None)
 POST        /verify               uk.gov.hmrc.cipemailfrontend.controllers.VerifyController.verify
-GET         /verify/passcode      uk.gov.hmrc.cipemailfrontend.controllers.VerifyPasscodeController.verifyForm(email: Option[String] ?= None)
+GET         /verify/passcode      uk.gov.hmrc.cipemailfrontend.controllers.VerifyPasscodeController.verifyForm(email: Option[String] ?= None, requestInProgress: Boolean ?= false)
 POST        /verify/passcode      uk.gov.hmrc.cipemailfrontend.controllers.VerifyPasscodeController.verify
 GET         /verify/resend        uk.gov.hmrc.cipemailfrontend.controllers.VerifyPasscodeController.resendForm(email: Option[String] ?= None)
 POST        /verify/resend        uk.gov.hmrc.cipemailfrontend.controllers.VerifyPasscodeController.resend
