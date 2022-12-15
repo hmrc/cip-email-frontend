@@ -24,7 +24,7 @@
         govukButton: GovukButton,
         govukErrorSummary: GovukErrorSummary
 )
-@(form: Form[uk.gov.hmrc.cipemailfrontend.models.EmailAndPasscode])(implicit request: Request[_], messages: Messages)
+@(form: Form[uk.gov.hmrc.cipemailfrontend.models.EmailAndPasscode], requestInProgress: Boolean = false)(implicit request: Request[_], messages: Messages)
 
 @layout(
     pageTitle = Some(messages("verifyPasscodePage.title")),
@@ -64,7 +64,11 @@
             preventDoubleClick = true
         ))
         <br />
-        <a class="govuk-link" href="@uk.gov.hmrc.cipemailfrontend.controllers.routes.VerifyPasscodeController.resendForm(form("email").value)">Resend passcode</a>
+        @if(!requestInProgress) {
+            <a class="govuk-link" href="@uk.gov.hmrc.cipemailfrontend.controllers.routes.VerifyPasscodeController.resendForm(form("email").value)">@messages("resendPasscode.linkMessage")</a>
+        } else {
+            <p class="govuk-body">@messages("resendPasscode.inProgress")</p>
+        }
     }
 }
 

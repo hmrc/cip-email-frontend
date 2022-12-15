@@ -51,6 +51,7 @@ class VerifyController @Inject()(
       },
       email => verifyConnector.verify(email).map {
         case Right(_) => SeeOther(s"/email-example-frontend/verify/passcode?email=${email.email}")
+        case Left(l) if l.statusCode == 429 => SeeOther(s"/email-example-frontend/verify/passcode?email=${email.email}&requestInProgress=true")
         case Left(l) if is4xx(l.statusCode) =>
           logger.warn(l.message)
           BadRequest(verifyPage(Email.form.withError("email", "verifyPage.error")))

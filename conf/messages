@@ -11,7 +11,7 @@ verifyPage.button = Continue
 verifyPage.error = Enter a valid email
 
 verifyPasscodePage.title = Enter passcode
-verifyPasscodePage.passcodeSent = We have sent a 6 character passcode to {0}. Enter the code below to continue.
+verifyPasscodePage.passcodeSent = We have sent a 6 character passcode to {0}. Enter the passcode below to continue.
 verifyPasscodePage.passcodeSentPrompt = It may take a few minutes to arrive.
 verifyPasscodePage.label = Enter passcode
 verifyPasscodePage.button = Continue
@@ -21,4 +21,6 @@ verifyPasscodePage.passcodeExpired = The passcode has expired. Click link below 
 
 resendPasscodePage.title = Request a new passcode
 resendPasscodePage.button = Request a new passcode
-resendPasscodePage.message = If you did not receive the text message or if the passcode has expired, you can request a new one.
+resendPasscodePage.message = If you did not receive the email or if the passcode has expired, you can request a new one.
+resendPasscode.linkMessage = Resend passcode
+resendPasscode.inProgress = Passcode has been sent to your email address.
