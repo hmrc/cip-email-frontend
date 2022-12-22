@@ -24,6 +24,7 @@ import uk.gov.hmrc.cipemailfrontend.views.html.VerifyPage
 import uk.gov.hmrc.http.HttpReads.is4xx
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
+import java.net.URLEncoder
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -50,8 +51,10 @@ class VerifyController @Inject()(
         Future.successful(BadRequest(verifyPage(invalid)))
       },
       email => verifyConnector.verify(email).map {
-        case Right(_) => SeeOther(s"/email-example-frontend/verify/passcode?email=${email.email}")
-        case Left(l) if l.statusCode == 429 => SeeOther(s"/email-example-frontend/verify/passcode?email=${email.email}&requestInProgress=true")
+        case Right(_) =>
+          SeeOther(s"/email-example-frontend/verify/passcode?email=${URLEncoder.encode(email.email)}")
+        case Left(l) if l.statusCode == 429 =>
+          SeeOther(s"/email-example-frontend/verify/passcode?email=${URLEncoder.encode(email.email)}&requestInProgress=true")
         case Left(l) if is4xx(l.statusCode) =>
           logger.warn(l.message)
           BadRequest(verifyPage(Email.form.withError("email", "verifyPage.error")))

@@ -47,7 +47,7 @@ class VerifyPasscodeController @Inject()(
     EmailAndPasscode.form.bindFromRequest().fold(
       invalid => {
         logger.warn(s"Failed to validate request")
-        Future.successful(BadRequest(verifyPasscodePage(invalid, true)))
+        Future.successful(BadRequest(verifyPasscodePage(invalid, requestInProgress = true)))
       },
       emailAndPasscode => {
         verifyConnector.verifyPasscode(emailAndPasscode) map {
@@ -55,22 +55,21 @@ class VerifyPasscodeController @Inject()(
             logger.warn(l.message)
             BadRequest(verifyPasscodePage(EmailAndPasscode.form
               .withError("passcode", "verifyPasscodePage.error")
-              .fill(EmailAndPasscode(emailAndPasscode.email, "")), true))
-          case Right(r) => {
+              .fill(EmailAndPasscode(emailAndPasscode.email, "")), requestInProgress = true))
+          case Right(r) =>
             val optStatus = r.json \ "status"
             if (optStatus.isDefined) {
               optStatus.get.as[String] match {
                 case "Verified" => SeeOther("/email-example-frontend?verified=true")
                 case "Not verified" => Ok(verifyPasscodePage(EmailAndPasscode.form
                   .withError("passcode", "verifyPasscodePage.incorrectPasscode")
-                  .fill(EmailAndPasscode(emailAndPasscode.email, "")), true))
+                  .fill(EmailAndPasscode(emailAndPasscode.email, "")), requestInProgress = true))
               }
             } else {
               Ok(verifyPasscodePage(EmailAndPasscode.form
                 .withError("passcode", "verifyPasscodePage.passcodeExpired")
-                .fill(EmailAndPasscode(emailAndPasscode.email, "")), false))
+                .fill(EmailAndPasscode(emailAndPasscode.email, "")), requestInProgress = false))
             }
-          }
         }
       }
     )
@@ -88,9 +87,9 @@ class VerifyPasscodeController @Inject()(
     verifyConnector.verify(Email(email.email)).map {
       case Right(_) =>
         Ok(verifyPasscodePage(EmailAndPasscode.form
-        .fill(EmailAndPasscode(email.email, ""))))
+          .fill(EmailAndPasscode(email.email, ""))))
       case Left(_) =>
-        Ok(verifyPasscodePage(EmailAndPasscode.form.fill(EmailAndPasscode(email.email, "")), true))
+        Ok(verifyPasscodePage(EmailAndPasscode.form.fill(EmailAndPasscode(email.email, "")), requestInProgress = true))
     }
   }
 }
