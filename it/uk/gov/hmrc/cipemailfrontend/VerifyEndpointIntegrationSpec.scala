@@ -25,6 +25,8 @@ import play.api.libs.ws.WSClient
 import play.api.libs.ws.ahc.AhcCurlRequestLogger
 import play.api.test.Injecting
 
+import java.net.URLEncoder
+
 class VerifyEndpointIntegrationSpec
   extends AnyWordSpec
     with Matchers
@@ -64,7 +66,7 @@ class VerifyEndpointIntegrationSpec
           .futureValue
 
       response.status shouldBe 303
-      response.header("Location") shouldBe Some(s"/email-example-frontend/verify/passcode?email=$email")
+      response.header("Location") shouldBe Some(s"/email-example-frontend/verify/passcode?email=${URLEncoder.encode(email)}")
     }
 
     "return 400 when form is invalid" in {
